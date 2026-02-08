@@ -176,7 +176,7 @@
   ];
 
   // -----------------------------
-  // UI
+  // UI refs
   // -----------------------------
   const badge = document.getElementById("badge");
   const titleEl = document.getElementById("title");
@@ -190,41 +190,55 @@
   // Map setup
   // -----------------------------
   const map = L.map("map", { zoomControl: true });
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+
+  // Choose your tiles (keep whichever you liked)
+  L.tileLayer("https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png", {
+    maxZoom: 20,
+    attribution: '&copy; OpenMapTiles &copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // default to NYC while loading
   map.setView([40.75, -73.98], 12);
 
-  // route line (all memories)
-  const routeLine = L.polyline([], { weight: 5, opacity: 0.85, dashArray: "8 10" }).addTo(map);
+  // route line (we’ll only draw up to current stop)
+  const routeLine = L.polyline([], { weight: 5, opacity: 0.9, dashArray: "8 10" }).addTo(map);
+
+  // We'll only show ONE marker at a time
+  const markerLayer = L.layerGroup().addTo(map);
 
   const coords = new Array(stops.length).fill(null);
-  const markers = [];
-
   let currentIndex = 0;
 
-  function makeIcon(isActive){
+  function makeIcon() {
     return L.divIcon({
       className: "",
-      html: `<div class="tpin ${isActive ? "active" : ""}">💗</div>`,
+      html: `<div class="tpin active">💗</div>`,
       iconSize: [34, 34],
       iconAnchor: [17, 17]
     });
   }
 
-  function setActiveMarker(i){
-    markers.forEach((m, idx) => m.setIcon(makeIcon(idx === i)));
+  function popHearts(count = 25){
+    for (let i = 0; i < count; i++){
+      const s = document.createElement("div");
+      s.className = "heart";
+      s.textContent = ["💗","💖","💘","💝","💕"][Math.floor(Math.random()*5)];
+      s.style.left = (Math.random()*100) + "vw";
+      s.style.animationDuration = (2 + Math.random()*2.5) + "s";
+      s.style.fontSize = (18 + Math.random()*22) + "px";
+      s.style.opacity = (0.5 + Math.random()*0.5);
+      hearts.appendChild(s);
+      setTimeout(() => s.remove(), 5000);
+    }
   }
 
   function render(i){
     currentIndex = i;
+
     badge.textContent = `Memory ${i + 1} of ${stops.length}`;
     titleEl.textContent = stops[i].label;
     bodyEl.textContent = stops[i].memory;
 
+    // Buttons
     btns.innerHTML = "";
 
     const back = document.createElement("button");
@@ -249,27 +263,25 @@
     btns.appendChild(back);
     btns.appendChild(next);
 
-    setActiveMarker(i);
-    const c = coords[i];
-    if (c) map.panTo(c, { animate: true, duration: 0.6 });
-  }
+    // Show ONLY the current marker
+    markerLayer.clearLayers();
 
-  function popHearts(count = 25){
-    for (let i = 0; i < count; i++){
-      const s = document.createElement("div");
-      s.className = "heart";
-      s.textContent = ["💗","💖","💘","💝","💕"][Math.floor(Math.random()*5)];
-      s.style.left = (Math.random()*100) + "vw";
-      s.style.animationDuration = (2 + Math.random()*2.5) + "s";
-      s.style.fontSize = (18 + Math.random()*22) + "px";
-      s.style.opacity = (0.5 + Math.random()*0.5);
-      hearts.appendChild(s);
-      setTimeout(() => s.remove(), 5000);
+    const c = coords[i];
+    if (c) {
+      const m = L.marker(c, { icon: makeIcon() }).addTo(markerLayer);
+      m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`).openPopup();
+
+      // Pan/zoom nicely so the location feels “featured”
+      map.flyTo(c, 14, { animate: true, duration: 0.9 });
     }
+
+    // Draw route only up to current memory (romantic “path so far”)
+    const linePts = coords.slice(0, i + 1).filter(Boolean);
+    routeLine.setLatLngs(linePts);
   }
 
   // -----------------------------
-  // Geocode places -> coordinates (cached)
+  // Geocoding (cached)
   // -----------------------------
   async function geocodePlace(placeText){
     const cacheKey = "geo_" + placeText.toLowerCase();
@@ -293,42 +305,22 @@
   async function init(){
     badge.textContent = "Placing memories…";
     titleEl.textContent = "Loading…";
-    bodyEl.textContent = "One moment while we place your pins.";
+    bodyEl.textContent = "One moment while we place your locations.";
     btns.innerHTML = "";
 
-    // Create markers immediately
-    for (let i = 0; i < stops.length; i++){
-      const m = L.marker([40.75, -73.98], { icon: makeIcon(i === 0) }).addTo(map);
-      m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`);
-      m.on("click", () => render(i));
-      markers.push(m);
-    }
-
-    // Geocode sequentially (polite + reliable)
+    // Geocode sequentially (reliable + polite)
     for (let i = 0; i < stops.length; i++){
       badge.textContent = `Finding: ${stops[i].label}… (${i + 1}/${stops.length})`;
       const c = await geocodePlace(stops[i].query);
-      coords[i] = c;
-
-      if (c) markers[i].setLatLng(c);
-      else markers[i].setLatLng([40.75 + i*0.01, -73.98 - i*0.01]);
-
+      coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01]; // fallback still works
       await new Promise(r => setTimeout(r, 650));
     }
 
-    // Draw route + fit bounds
-    const linePts = coords.filter(Boolean);
-    routeLine.setLatLngs(linePts);
-    if (linePts.length >= 2){
-      const bounds = L.latLngBounds(linePts);
-      map.fitBounds(bounds.pad(0.25));
-    }
-
-    // Start on first memory
+    // Start at the first memory ONLY (others not shown)
     render(0);
   }
 
-  // final overlay buttons
+  // Final overlay buttons
   document.getElementById("yesBtn").addEventListener("click", () => {
     finalMsg.textContent = "YAY!!! 💞 Screenshot this as proof 😌";
     popHearts(55);
@@ -350,5 +342,3 @@
 
   init();
 </script>
-</body>
-</html>

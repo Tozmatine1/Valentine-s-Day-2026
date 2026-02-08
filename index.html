@@ -69,6 +69,16 @@
   margin: 0;
 }
 
+    /* Floating hearts above map */
+.hearts{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  z-index: 90000; /* above Leaflet, below modal */
+}
+
 
     /* Buttons BELOW the map */
     .nav-controls{
@@ -358,6 +368,7 @@
   </script>
 </body>
 </html>
+
 
 
 

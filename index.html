@@ -179,9 +179,10 @@
   <div class="overlay" id="overlay">
     <div class="modal">
       <div class="final-question">
-  <h3>Sophia… will you be my Valentine? 💘</h3>
-  <p>Our first of many Inshallah</p>
+  <h3 id="finalTitle">Sophia… will you be my Valentine? 💘</h3>
+  <p id="finalSubtitle">Our first Valentine’s Day — and a lot more chapters after this.</p>
 </div>
+
       <div class="buttons">
         <button class="primary" id="yesBtn">Yes 💖</button>
         <button class="ghost" id="noBtn">No 🙃</button>
@@ -344,12 +345,26 @@
 });
 
 
-    // Final overlay buttons
-    document.getElementById("yesBtn").addEventListener("click", () => {
-      popHearts(55);
-      const no = document.getElementById("noBtn");
-      no.disabled = true;
-      no.style.opacity = 0.5;
+    const finalTitle = document.getElementById("finalTitle");
+const finalSubtitle = document.getElementById("finalSubtitle");
+
+document.getElementById("yesBtn").addEventListener("click", () => {
+
+  // Change main text
+  finalTitle.textContent = "YAY! I love you so much 💖";
+
+  // Remove subtitle
+  finalSubtitle.textContent = "";
+
+  // Hearts
+  popHearts(55);
+
+  // Disable No button
+  const no = document.getElementById("noBtn");
+  no.disabled = true;
+  no.style.opacity = 0.5;
+});
+
     });
 
     document.getElementById("noBtn").addEventListener("mouseover", (e) => {
@@ -367,6 +382,7 @@
   </script>
 </body>
 </html>
+
 
 
 

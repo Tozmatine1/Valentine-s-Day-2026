@@ -199,9 +199,6 @@
 
   map.setView([40.75, -73.98], 12);
 
-  // route line (we’ll only draw up to current stop)
-  const routeLine = L.polyline([], { weight: 5, opacity: 0.9, dashArray: "8 10" }).addTo(map);
-
   // We'll only show ONE marker at a time
   const markerLayer = L.layerGroup().addTo(map);
 
@@ -274,10 +271,6 @@
       // Pan/zoom nicely so the location feels “featured”
       map.flyTo(c, 14, { animate: true, duration: 0.9 });
     }
-
-    // Draw route only up to current memory (romantic “path so far”)
-    const linePts = coords.slice(0, i + 1).filter(Boolean);
-    routeLine.setLatLngs(linePts);
   }
 
   // -----------------------------
@@ -342,5 +335,6 @@
 
   init();
 </script>
+
 
 

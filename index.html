@@ -20,67 +20,70 @@
 
   <style>
     :root{
---pink:#ff2f55;
---card:rgba(20,22,34,.78);
---border:rgba(255,255,255,.10);
---shadow:0 12px 40px rgba(0,0,0,.45);
---text:#f4f5f7;
---muted:rgba(255,255,255,.70);
+      --pink:#ff2f55;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 12px 40px rgba(0,0,0,.25);
+      --muted:rgba(0,0,0,.60);
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background: rgb(255, 220, 235);
-      color:var(--text);
     }
-    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px;display:grid;gap:14px}
-    .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+    /* Keep your "not full width" feel */
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 14px 28px;
+      display:grid;
+      gap:12px;
+    }
+
+    /* Map stays the same size (width constrained by .wrap) */
     #map{
-      height:540px;border-radius:22px;overflow:hidden;
-      border:1px solid var(--border);box-shadow:var(--shadow);background:#fff;
-    }
-    .panel{
-      background: rgba(255, 105, 180, 0.85);backdrop-filter:blur(10px);
-      border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);
-      padding:16px;display:grid;gap:12px;min-height:540px;
-    }
-    .card{
+      height:540px;
+      border-radius:22px;
+      overflow:hidden;
       border:1px solid var(--border);
-      border-radius:18px;padding:14px;background: rgba(255, 105, 180, 0.85);
+      box-shadow:var(--shadow);
+      background:#fff;
     }
-    .card h2{margin:0 0 6px;font-size:18px}
-    .card p{margin:0;color:var(--muted);line-height:1.45}
 
-    .buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    /* Buttons BELOW the map */
+    .nav-controls{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+
     button{
-      border:0;border-radius:999px;padding:11px 16px;font-size:15px;
-      cursor:pointer;transition:transform .08s ease;
+      border:0;
+      border-radius:999px;
+      padding:11px 16px;
+      font-size:15px;
+      cursor:pointer;
+      transition:transform .08s ease, opacity .15s ease;
+      box-shadow:0 10px 22px rgba(0,0,0,.16);
     }
-    /* Buttons below map */
-.nav-controls{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  margin-top:12px;
-}
-
-/* Optional: make buttons match map width nicely on mobile */
-@media (max-width: 520px){
-  .nav-controls{
-    flex-direction:column;
-  }
-  .nav-controls button{
-    width:100%;
-  }
-}
     button:active{transform:scale(.98)}
-    .primary{background:var(--pink);color:#fff}
-    .ghost{background:#eee}
-    .small{font-size:12px;color:var(--muted);line-height:1.35}
+    button:disabled{cursor:not-allowed; opacity:.5}
 
-    /* --- pretty markers (active pulses) --- */
+    .primary{background:var(--pink);color:#fff}
+    .ghost{background:#eee;color:#111}
+
+    .hint{
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      margin-top:4px;
+    }
+
+    /* Pretty pin */
     .tpin{
       width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
       font-size:16px;border:2px solid rgba(0,0,0,.12);
@@ -94,12 +97,12 @@
     }
     @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.10)}100%{transform:scale(1)}}
 
-    /* hearts */
+    /* Hearts */
     .hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
     .heart{position:absolute;bottom:-40px;font-size:22px;animation:floatUp linear forwards;opacity:.9}
     @keyframes floatUp{to{transform:translateY(-110vh) rotate(20deg);opacity:0}}
 
-    /* final overlay */
+    /* Final overlay */
     .overlay{
       position:fixed;inset:0;background:rgba(0,0,0,.45);
       display:none;align-items:center;justify-content:center;padding:16px;
@@ -114,24 +117,26 @@
       padding:22px;text-align:center;
     }
     .modal h3{margin:0 0 8px;font-size:28px;letter-spacing:-.2px}
-    .modal p{margin:0 0 14px;color:var(--muted)}
+    .modal p{margin:0 0 14px;color:rgba(0,0,0,.65)}
+    .buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+
+    @media (max-width:520px){
+      .nav-controls{flex-direction:column;}
+      .nav-controls button{width:100%;}
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
-    <div class="grid">
-  <div>
     <div id="map"></div>
 
-    <!-- Buttons BELOW the map -->
-    <div class="nav-controls" id="navControls">
+    <div class="nav-controls">
       <button id="prevBtn" class="ghost">← Back</button>
       <button id="nextBtn" class="primary">Next →</button>
     </div>
-  </div>
-</div>
+
+    <div class="hint">Tip: click a pin to jump, or use Next/Back like a timeline.</div>
   </div>
 
   <div class="hearts" id="hearts"></div>
@@ -140,7 +145,7 @@
     <div class="modal">
       <h3>Sophia… will you be my Valentine? 💘</h3>
       <p>Our first Valentine’s Day — and a lot more chapters after this.</p>
-      <div class="buttons" style="justify-content:center;">
+      <div class="buttons">
         <button class="primary" id="yesBtn">Yes 💖</button>
         <button class="ghost" id="noBtn">No 🙃</button>
       </div>
@@ -148,212 +153,182 @@
     </div>
   </div>
 
-<script>
-  // -----------------------------
-  // Your memories (in order)
-  // -----------------------------
-  const stops = [
-    { label: "Zaytinya", query: "Zaytinya, New York City, NY", memory: "We met for the first time at Zaytinya" },
-    { label: "Central Park", query: "Central Park, New York City, NY", memory: "We had our first kiss at a picnic in Central Park" },
-    { label: "Tarrytown", query: "Tarrytown, NY", memory: "I asked you to be my girlfriend at Tarrytown and you said yes :D" },
-    { label: "Hadestown (Broadway)", query: "Broadway Theatre, New York City, NY", memory: "We went to broadway to see Hadestown before you went back to Texas" },
-    { label: "Bad Roman", query: "Bad Roman, New York City, NY", memory: "You came back to me and I took you to Bad Roman" },
-    { label: "Madison Square Garden", query: "Madison Square Garden, New York City, NY", memory: "You gave me the best birthday ever at MSG" },
-    { label: "Gaia Restaurant", query: "Gaia Restaurant, New York City, NY", memory: "Our first Valentine's day" }
-  ];
+  <script>
+    // -----------------------------
+    // Memories (personalized)
+    // -----------------------------
+    const stops = [
+      { label: "Zaytinya", query: "Zaytinya, New York City, NY", memory: "We met for the first time at Zaytinya" },
+      { label: "Central Park", query: "Central Park, New York City, NY", memory: "We had our first kiss at a picnic in Central Park" },
+      { label: "Tarrytown", query: "Tarrytown, NY", memory: "I asked you to be my girlfriend at Tarrytown and you said yes :D" },
+      { label: "Hadestown (Broadway)", query: "Broadway Theatre, New York City, NY", memory: "We went to broadway to see Hadestown before you went back to Texas" },
+      { label: "Bad Roman", query: "Bad Roman, New York City, NY", memory: "You came back to me and I took you to Bad Roman" },
+      { label: "Madison Square Garden", query: "Madison Square Garden, New York City, NY", memory: "You gave me the best birthday ever at MSG" },
+      { label: "Gaia Restaurant", query: "Gaia Restaurant, New York City, NY", memory: "Our first Valentine's day" }
+    ];
 
-  // -----------------------------
-  // UI refs
-  // -----------------------------
-  const overlay = document.getElementById("overlay");
-  const finalMsg= document.getElementById("finalMsg");
-  const hearts  = document.getElementById("hearts");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
+    // -----------------------------
+    // Refs
+    // -----------------------------
+    const prevBtn  = document.getElementById("prevBtn");
+    const nextBtn  = document.getElementById("nextBtn");
+    const overlay  = document.getElementById("overlay");
+    const finalMsg = document.getElementById("finalMsg");
+    const hearts   = document.getElementById("hearts");
 
-  // -----------------------------
-  // Map setup
-  // -----------------------------
-  const map = L.map("map", { zoomControl: true });
+    // -----------------------------
+    // Map setup
+    // -----------------------------
+    const map = L.map("map", { zoomControl: true });
 
-  // Choose your tiles (keep whichever you liked)
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-  maxZoom: 20,
-  attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-}).addTo(map);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+      maxZoom: 20,
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    }).addTo(map);
 
-  map.setView([40.75, -73.98], 12);
+    map.setView([40.75, -73.98], 12);
 
-  // We'll only show ONE marker at a time
-  const markerLayer = L.layerGroup().addTo(map);
+    // Store coordinates + markers
+    const coords  = new Array(stops.length).fill(null);
+    const markers = new Array(stops.length).fill(null);
+    let currentIndex = 0;
 
-  const coords = new Array(stops.length).fill(null);
-  let currentIndex = 0;
-
-  function makeIcon() {
-    return L.divIcon({
-      className: "",
-      html: `<div class="tpin active">💗</div>`,
-      iconSize: [34, 34],
-      iconAnchor: [17, 17]
-    });
-  }
-
-  function popHearts(count = 25){
-    for (let i = 0; i < count; i++){
-      const s = document.createElement("div");
-      s.className = "heart";
-      s.textContent = ["💗","💖","💘","💝","💕"][Math.floor(Math.random()*5)];
-      s.style.left = (Math.random()*100) + "vw";
-      s.style.animationDuration = (2 + Math.random()*2.5) + "s";
-      s.style.fontSize = (18 + Math.random()*22) + "px";
-      s.style.opacity = (0.5 + Math.random()*0.5);
-      hearts.appendChild(s);
-      setTimeout(() => s.remove(), 5000);
+    function iconHtml(isActive){
+      return `<div class="tpin ${isActive ? "active" : ""}">💗</div>`;
     }
-  }
 
-  function render(i){
-  currentIndex = i;
+    function makeIcon(isActive){
+      return L.divIcon({
+        className: "",
+        html: iconHtml(isActive),
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+      });
+    }
 
-  // Update buttons
-  prevBtn.disabled = (i === 0);
-  prevBtn.style.opacity = prevBtn.disabled ? 0.5 : 1;
+    function popHearts(count = 25){
+      for (let i = 0; i < count; i++){
+        const s = document.createElement("div");
+        s.className = "heart";
+        s.textContent = ["💗","💖","💘","💝","💕"][Math.floor(Math.random()*5)];
+        s.style.left = (Math.random()*100) + "vw";
+        s.style.animationDuration = (2 + Math.random()*2.5) + "s";
+        s.style.fontSize = (18 + Math.random()*22) + "px";
+        s.style.opacity = (0.5 + Math.random()*0.5);
+        hearts.appendChild(s);
+        setTimeout(() => s.remove(), 5000);
+      }
+    }
 
-  nextBtn.textContent = (i === stops.length - 1) ? "One more thing… 💘" : "Next →";
+    function updateButtons(){
+      prevBtn.disabled = (currentIndex === 0);
+      nextBtn.textContent = (currentIndex === stops.length - 1) ? "One more thing… 💘" : "Next →";
+    }
 
-  // Show ONLY the current marker
-  markerLayer.clearLayers();
+    function setActiveMarker(index){
+      // Update icons so only the active pin pulses
+      for (let i = 0; i < markers.length; i++){
+        if (!markers[i]) continue;
+        markers[i].setIcon(makeIcon(i === index));
+      }
+    }
 
-  const c = coords[i];
-  if (c) {
-    const m = L.marker(c, { icon: makeIcon() }).addTo(markerLayer);
-    m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`).openPopup();
-    map.flyTo(c, 14, { animate: true, duration: 0.9 });
-  }
-}
+    function goTo(index, { openPopup = true } = {}){
+      currentIndex = index;
+      updateButtons();
+      setActiveMarker(index);
 
-  prevBtn.addEventListener("click", () => {
-  if (currentIndex > 0) render(currentIndex - 1);
-});
+      const c = coords[index];
+      if (!c) return;
 
-nextBtn.addEventListener("click", () => {
-  if (currentIndex === stops.length - 1) {
-    overlay.classList.add("show");
-    popHearts(45);
-  } else {
-    render(currentIndex + 1);
-  }
-});
+      map.flyTo(c, 14, { animate: true, duration: 0.9 });
 
+      const m = markers[index];
+      if (m && openPopup) m.openPopup();
+    }
 
+    // -----------------------------
+    // Geocoding (cached + throttled)
+    // -----------------------------
+    async function geocodePlace(placeText){
+      const cacheKey = "geo_" + placeText.toLowerCase();
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) { try { return JSON.parse(cached); } catch {} }
 
-    const back = document.createElement("button");
-    back.className = "ghost";
-    back.textContent = "← Back";
-    back.disabled = (i === 0);
-    if (back.disabled) back.style.opacity = 0.5;
-    back.onclick = () => render(i - 1);
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(placeText)}`;
+      const res = await fetch(url, { headers: { "Accept": "application/json" } });
+      const data = await res.json();
+      if (!data || !data[0]) return null;
 
-    const next = document.createElement("button");
-    next.className = "primary";
-    next.textContent = (i === stops.length - 1) ? "One more thing… 💘" : "Next →";
-    next.onclick = () => {
-      if (i === stops.length - 1) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+      const out = [lat, lon];
+      localStorage.setItem(cacheKey, JSON.stringify(out));
+      return out;
+    }
+
+    // -----------------------------
+    // Init: geocode, create pins, wire navigation
+    // -----------------------------
+    async function init(){
+      updateButtons();
+
+      // Geocode sequentially (polite/reliable)
+      for (let i = 0; i < stops.length; i++){
+        const c = await geocodePlace(stops[i].query);
+        coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01];
+        await new Promise(r => setTimeout(r, 650));
+      }
+
+      // Create markers for all stops
+      for (let i = 0; i < stops.length; i++){
+        const m = L.marker(coords[i], { icon: makeIcon(i === 0) }).addTo(map);
+        m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`);
+        m.on("click", () => goTo(i, { openPopup: true }));
+        markers[i] = m;
+      }
+
+      // Start on first stop
+      goTo(0, { openPopup: true });
+    }
+
+    // Buttons
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) goTo(currentIndex - 1);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex === stops.length - 1) {
         overlay.classList.add("show");
         popHearts(45);
       } else {
-        render(i + 1);
+        goTo(currentIndex + 1);
       }
-    };
+    });
 
-    btns.appendChild(back);
-    btns.appendChild(next);
+    // Final overlay buttons
+    document.getElementById("yesBtn").addEventListener("click", () => {
+      finalMsg.textContent = "YAY!!! 💞 Screenshot this as proof 😌";
+      popHearts(55);
+      const no = document.getElementById("noBtn");
+      no.disabled = true;
+      no.style.opacity = 0.5;
+    });
 
-    // Show ONLY the current marker
-    markerLayer.clearLayers();
+    document.getElementById("noBtn").addEventListener("mouseover", (e) => {
+      const btn = e.currentTarget;
+      const x = (Math.random() * 220) - 110;
+      const y = (Math.random() * 120) - 60;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
 
-    const c = coords[i];
-    if (c) {
-      const m = L.marker(c, { icon: makeIcon() }).addTo(markerLayer);
-      m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`).openPopup();
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) overlay.classList.remove("show");
+    });
 
-      // Pan/zoom nicely so the location feels “featured”
-      map.flyTo(c, 14, { animate: true, duration: 0.9 });
-    }
-  }
-
-  // -----------------------------
-  // Geocoding (cached)
-  // -----------------------------
-  async function geocodePlace(placeText){
-    const cacheKey = "geo_" + placeText.toLowerCase();
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) { try { return JSON.parse(cached); } catch {} }
-
-    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(placeText)}`;
-    const res = await fetch(url, { headers: { "Accept": "application/json" } });
-    const data = await res.json();
-    if (!data || !data[0]) return null;
-
-    const lat = parseFloat(data[0].lat);
-    const lon = parseFloat(data[0].lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-    const out = [lat, lon];
-    localStorage.setItem(cacheKey, JSON.stringify(out));
-    return out;
-  }
-
-  async function init(){
-  // Geocode sequentially (reliable + polite)
-  for (let i = 0; i < stops.length; i++){
-    const c = await geocodePlace(stops[i].query);
-    coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01];
-    await new Promise(r => setTimeout(r, 650));
-  }
-
-  render(0);
-}
-
-
-  // Final overlay buttons
-  document.getElementById("yesBtn").addEventListener("click", () => {
-    finalMsg.textContent = "YAY!!! 💞 Screenshot this as proof 😌";
-    popHearts(55);
-    const no = document.getElementById("noBtn");
-    no.disabled = true;
-    no.style.opacity = 0.5;
-  });
-
-  document.getElementById("noBtn").addEventListener("mouseover", (e) => {
-    const btn = e.currentTarget;
-    const x = (Math.random() * 220) - 110;
-    const y = (Math.random() * 120) - 60;
-    btn.style.transform = `translate(${x}px, ${y}px)`;
-  });
-
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) overlay.classList.remove("show");
-  });
-
-  init();
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    init();
+  </script>
+</body>
+</html>

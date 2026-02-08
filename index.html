@@ -359,10 +359,9 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   // Hearts
   popHearts(55);
 
-  // Disable No button
-  const no = document.getElementById("noBtn");
-  no.disabled = true;
-  no.style.opacity = 0.5;
+  // Hide buttons
+  document.getElementById("yesBtn").style.display = "none";
+  document.getElementById("noBtn").style.display = "none";
 });
 
     document.getElementById("noBtn").addEventListener("mouseover", (e) => {
@@ -380,6 +379,7 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

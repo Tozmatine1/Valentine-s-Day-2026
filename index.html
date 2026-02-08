@@ -45,11 +45,6 @@
       border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);
       padding:16px;display:grid;gap:12px;min-height:540px;
     }
-    .badge{
-      display:inline-flex;gap:8px;align-items:center;
-      padding:8px 12px;border-radius:999px;border:1px solid var(--border);
-      width:fit-content;background:rgba(255, 105, 180, 0.85);font-weight:600;
-    }
     .card{
       border:1px solid var(--border);
       border-radius:18px;padding:14px;background: rgba(255, 105, 180, 0.85);
@@ -112,8 +107,7 @@
       <div id="map"></div>
 
       <div class="panel">
-        <div class="badge" id="badge">Loading the map…</div>
-
+        
         <div class="card">
           <h2 id="title">Getting things ready…</h2>
           <p id="body">Placing your memories on the map.</p>
@@ -159,7 +153,6 @@
   // -----------------------------
   // UI refs
   // -----------------------------
-  const badge = document.getElementById("badge");
   const titleEl = document.getElementById("title");
   const bodyEl  = document.getElementById("body");
   const btns    = document.getElementById("btns");
@@ -212,7 +205,6 @@
   function render(i){
     currentIndex = i;
 
-    badge.textContent = `Memory ${i + 1} of ${stops.length}`;
     titleEl.textContent = stops[i].label;
     bodyEl.textContent = stops[i].memory;
 
@@ -277,7 +269,6 @@
   }
 
   async function init(){
-    badge.textContent = "Preparing our story… 💗";
 titleEl.textContent = "Just a moment…";
 bodyEl.textContent = "Getting everything ready for you.";
     btns.innerHTML = "";
@@ -315,6 +306,7 @@ bodyEl.textContent = "Getting everything ready for you.";
 
   init();
 </script>
+
 
 
 

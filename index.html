@@ -20,6 +20,7 @@
 
   <style>
     :root{
+--pink:#ff2f55;
 --card:rgba(20,22,34,.78);
 --border:rgba(255,255,255,.10);
 --shadow:0 12px 40px rgba(0,0,0,.45);
@@ -57,6 +58,23 @@
       border:0;border-radius:999px;padding:11px 16px;font-size:15px;
       cursor:pointer;transition:transform .08s ease;
     }
+    /* Buttons below map */
+.nav-controls{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+}
+
+/* Optional: make buttons match map width nicely on mobile */
+@media (max-width: 520px){
+  .nav-controls{
+    flex-direction:column;
+  }
+  .nav-controls button{
+    width:100%;
+  }
+}
     button:active{transform:scale(.98)}
     .primary{background:var(--pink);color:#fff}
     .ghost{background:#eee}
@@ -104,22 +122,16 @@
   <div class="wrap">
 
     <div class="grid">
-      <div id="map"></div>
+  <div>
+    <div id="map"></div>
 
-      <div class="panel">
-        
-        <div class="card">
-          <h2 id="title">Getting things ready…</h2>
-          <p id="body">Placing your memories on the map.</p>
-
-          <div class="buttons" id="btns"></div>
-        </div>
-
-        <div class="small">
-          Tip: you can click any pin, or use Next/Back like a timeline.
-        </div>
-      </div>
+    <!-- Buttons BELOW the map -->
+    <div class="nav-controls" id="navControls">
+      <button id="prevBtn" class="ghost">← Back</button>
+      <button id="nextBtn" class="primary">Next →</button>
     </div>
+  </div>
+</div>
   </div>
 
   <div class="hearts" id="hearts"></div>
@@ -153,12 +165,11 @@
   // -----------------------------
   // UI refs
   // -----------------------------
-  const titleEl = document.getElementById("title");
-  const bodyEl  = document.getElementById("body");
-  const btns    = document.getElementById("btns");
   const overlay = document.getElementById("overlay");
   const finalMsg= document.getElementById("finalMsg");
   const hearts  = document.getElementById("hearts");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
 
   // -----------------------------
   // Map setup
@@ -203,13 +214,39 @@
   }
 
   function render(i){
-    currentIndex = i;
+  currentIndex = i;
 
-    titleEl.textContent = stops[i].label;
-    bodyEl.textContent = stops[i].memory;
+  // Update buttons
+  prevBtn.disabled = (i === 0);
+  prevBtn.style.opacity = prevBtn.disabled ? 0.5 : 1;
 
-    // Buttons
-    btns.innerHTML = "";
+  nextBtn.textContent = (i === stops.length - 1) ? "One more thing… 💘" : "Next →";
+
+  // Show ONLY the current marker
+  markerLayer.clearLayers();
+
+  const c = coords[i];
+  if (c) {
+    const m = L.marker(c, { icon: makeIcon() }).addTo(markerLayer);
+    m.bindPopup(`<b>${stops[i].label}</b><br><i>${stops[i].memory}</i>`).openPopup();
+    map.flyTo(c, 14, { animate: true, duration: 0.9 });
+  }
+}
+
+  prevBtn.addEventListener("click", () => {
+  if (currentIndex > 0) render(currentIndex - 1);
+});
+
+nextBtn.addEventListener("click", () => {
+  if (currentIndex === stops.length - 1) {
+    overlay.classList.add("show");
+    popHearts(45);
+  } else {
+    render(currentIndex + 1);
+  }
+});
+
+
 
     const back = document.createElement("button");
     back.className = "ghost";
@@ -269,20 +306,16 @@
   }
 
   async function init(){
-titleEl.textContent = "Just a moment…";
-bodyEl.textContent = "Getting everything ready for you.";
-    btns.innerHTML = "";
-
-    // Geocode sequentially (reliable + polite)
-    for (let i = 0; i < stops.length; i++){
-      const c = await geocodePlace(stops[i].query);
-      coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01]; // fallback still works
-      await new Promise(r => setTimeout(r, 650));
-    }
-
-    // Start at the first memory ONLY (others not shown)
-    render(0);
+  // Geocode sequentially (reliable + polite)
+  for (let i = 0; i < stops.length; i++){
+    const c = await geocodePlace(stops[i].query);
+    coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01];
+    await new Promise(r => setTimeout(r, 650));
   }
+
+  render(0);
+}
+
 
   // Final overlay buttons
   document.getElementById("yesBtn").addEventListener("click", () => {

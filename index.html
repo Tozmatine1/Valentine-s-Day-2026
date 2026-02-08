@@ -336,17 +336,16 @@
     });
 
     nextBtn.addEventListener("click", () => {
-      if (currentIndex === stops.length - 1) {
-        overlay.classList.add("show");
-        popHearts(45);
-      } else {
-        goTo(currentIndex + 1);
-      }
-    });
+  if (currentIndex === stops.length - 1) {
+    overlay.classList.add("show");
+  } else {
+    goTo(currentIndex + 1);
+  }
+});
+
 
     // Final overlay buttons
     document.getElementById("yesBtn").addEventListener("click", () => {
-      finalMsg.textContent = "YAY!!! 💞 Screenshot this as proof 😌";
       popHearts(55);
       const no = document.getElementById("noBtn");
       no.disabled = true;
@@ -368,6 +367,7 @@
   </script>
 </body>
 </html>
+
 
 
 

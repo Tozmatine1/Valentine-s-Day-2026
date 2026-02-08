@@ -295,14 +295,13 @@
   }
 
   async function init(){
-    badge.textContent = "Placing memories…";
-    titleEl.textContent = "Loading…";
-    bodyEl.textContent = "One moment while we place your locations.";
+    badge.textContent = "Preparing our story… 💗";
+titleEl.textContent = "Just a moment…";
+bodyEl.textContent = "Getting everything ready for you.";
     btns.innerHTML = "";
 
     // Geocode sequentially (reliable + polite)
     for (let i = 0; i < stops.length; i++){
-      badge.textContent = `Finding: ${stops[i].label}… (${i + 1}/${stops.length})`;
       const c = await geocodePlace(stops[i].query);
       coords[i] = c || [40.75 + i*0.01, -73.98 - i*0.01]; // fallback still works
       await new Promise(r => setTimeout(r, 650));
@@ -334,6 +333,7 @@
 
   init();
 </script>
+
 
 
 

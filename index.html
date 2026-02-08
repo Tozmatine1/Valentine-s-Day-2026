@@ -34,16 +34,6 @@
       color:var(--text);
     }
     .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px;display:grid;gap:14px}
-    .top{
-      background: rgba(255, 105, 180, 0.85);
-      backdrop-filter:blur(10px);
-      border:1px solid var(--border);
-      border-radius:22px;
-      box-shadow:var(--shadow);
-      padding:16px;
-    }
-    .top h1{margin:0 0 6px;font-size:26px;letter-spacing:-.2px}
-    .top p{margin:0;color:var(--muted);line-height:1.35}
     .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
     @media (max-width:900px){.grid{grid-template-columns:1fr}}
     #map{
@@ -117,12 +107,6 @@
 
 <body>
   <div class="wrap">
-    <div class="top">
-      <h1>🗺️ Our Story Map</h1>
-      <p>
-        Let's revisit the some of the key places and moments in our relationship so far. 💗
-      </p>
-    </div>
 
     <div class="grid">
       <div id="map"></div>
@@ -331,6 +315,7 @@ bodyEl.textContent = "Getting everything ready for you.";
 
   init();
 </script>
+
 
 
 

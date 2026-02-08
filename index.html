@@ -345,25 +345,13 @@
 });
 
 
-    const finalTitle = document.getElementById("finalTitle");
-const finalSubtitle = document.getElementById("finalSubtitle");
-
 document.getElementById("yesBtn").addEventListener("click", () => {
-
-  // Change main text
-  finalTitle.textContent = "YAY! I love you so much 💖";
-
-  // Remove subtitle
-  finalSubtitle.textContent = "";
-
-  // Hearts
-  popHearts(55);
-
-  // Disable No button
-  const no = document.getElementById("noBtn");
-  no.disabled = true;
-  no.style.opacity = 0.5;
-});
+      finalMsg.textContent = "YAY!!! 💞 Screenshot this as proof 😌";
+      popHearts(55);
+      const no = document.getElementById("noBtn");
+      no.disabled = true;
+      no.style.opacity = 0.5;
+    });
 
     });
 
@@ -382,6 +370,7 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

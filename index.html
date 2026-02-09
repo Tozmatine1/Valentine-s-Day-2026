@@ -236,7 +236,7 @@ video:-webkit-full-screen {
   
   <div class="overlay" id="overlay">
     <div class="modal">
-      <div class="final-question">
+      <div class="final-question" id="valentineQuestionBox">
   <h3 id="finalTitle">Sophia… will you be my Valentine? 💘</h3>
   <p id="finalSubtitle">Our first of many, Inshallah.</p>
 </div>
@@ -434,14 +434,15 @@ const noVideoWrap = document.getElementById("noVideoWrap");
 const noVideo = document.getElementById("noVideo");
 
 const finalQuestionBox = document.getElementById("finalQuestionBox");
+const valentineQuestionBox = document.getElementById("valentineQuestionBox");
+
 
 document.getElementById("noBtn").addEventListener("click", () => {
 
   // Force-hide the Sophia box
-  if (finalQuestionBox) {
-    finalQuestionBox.style.display = "none";
-  }
-
+  if (valentineQuestionBox) {
+  valentineQuestionBox.style.display = "none";
+}
   // Show video
   noVideoWrap.style.display = "block";
 
@@ -477,26 +478,3 @@ introOkBtn.addEventListener("click", () => {
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

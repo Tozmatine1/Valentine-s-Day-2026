@@ -109,6 +109,16 @@ video:-webkit-full-screen {
   background: black;
 }
 
+    /* Intro modal fills most of the screen width */
+.introModal {
+  width: min(980px, calc(100vw - 24px));
+}
+
+/* Intro card (pink box) stretches full width of the intro modal */
+.introModal #finalQuestionBox {
+  width: 100%;
+}
+
 
     /* Floating hearts above map */
 .hearts{
@@ -478,6 +488,7 @@ introOkBtn.addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

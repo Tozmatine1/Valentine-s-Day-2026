@@ -90,6 +90,15 @@
   margin: 0;
 }
 
+video:fullscreen {
+  background: black;
+}
+
+video:-webkit-full-screen {
+  background: black;
+}
+
+
     /* Floating hearts above map */
 .hearts{
   position: fixed;
@@ -396,24 +405,38 @@ document.getElementById("yesBtn").addEventListener("click", () => {
 const noVideoWrap = document.getElementById("noVideoWrap");
 const noVideo = document.getElementById("noVideo");
 
+const finalQuestion = document.querySelector(".final-question");
+
 document.getElementById("noBtn").addEventListener("click", () => {
+
+  // Hide the question box
+  if (finalQuestion) {
+    finalQuestion.style.display = "none";
+  }
 
   // Show video
   noVideoWrap.style.display = "block";
-
-  // Optional: update text
-  finalSubtitle.textContent = "";
 
   // Hide buttons
   document.getElementById("yesBtn").style.display = "none";
   document.getElementById("noBtn").style.display = "none";
 
-  // Play from start
+  // Restart video
   noVideo.currentTime = 0;
-  noVideo.play().catch(() => {
-    // If autoplay is blocked, user can press play
-  });
+
+  // Play video
+  noVideo.play().catch(() => {});
+
+  // Force fullscreen (cross-browser)
+  if (noVideo.requestFullscreen) {
+    noVideo.requestFullscreen();
+  } else if (noVideo.webkitRequestFullscreen) {
+    noVideo.webkitRequestFullscreen(); // Safari
+  } else if (noVideo.msRequestFullscreen) {
+    noVideo.msRequestFullscreen(); // IE/Edge legacy
+  }
 });
+
 
 
     overlay.addEventListener("click", (e) => {
@@ -424,6 +447,7 @@ document.getElementById("noBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

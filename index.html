@@ -68,15 +68,20 @@
   box-shadow:0 12px 30px rgba(0,0,0,.18);
 }
 
-.videoBox video,
-.videoBox iframe{
+.videoBox{
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+
+.videoBox video{
   width:100%;
   height:auto;
   display:block;
   background:#000;
 }
 
-    
 .final-question h3{
   margin: 0 0 6px;
 }
@@ -173,24 +178,10 @@
 
 <div id="noVideoWrap" style="display:none; margin-top:14px;">
   <div class="videoBox">
-    <!-- Option A: Local MP4 file (recommended) -->
-    <video id="noVideo" controls autoplay playsinline>
+    <video id="noVideo" controls playsinline>
       <source src="no.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-
-    <!-- Option B: YouTube/Vimeo embed instead (comment Option A above and use this)
-    <iframe
-      id="noVideoFrame"
-      width="100%"
-      height="315"
-      src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1"
-      title="Video"
-      frameborder="0"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen
-    ></iframe>
-    -->
   </div>
 </div>
 
@@ -404,7 +395,31 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   document.getElementById("noBtn").style.display = "none";
 });
 
-    const noVideoWrap = document.getElementById("noVideoWrap");
+const noVideoWrap = document.getElementById("noVideoWrap");
+const noVideo = document.getElementById("noVideo");
+
+document.getElementById("noBtn").addEventListener("click", () => {
+
+  // Show video
+  noVideoWrap.style.display = "block";
+
+  // Optional: update text
+  finalTitle.textContent = "Wrong answer 🙃";
+  finalSubtitle.textContent = "";
+
+  // Hide buttons
+  document.getElementById("yesBtn").style.display = "none";
+  document.getElementById("noBtn").style.display = "none";
+
+  // Play from start
+  noVideo.currentTime = 0;
+  noVideo.play().catch(() => {
+    // If autoplay is blocked, user can press play
+  });
+});
+
+    
+const noVideoWrap = document.getElementById("noVideoWrap");
 const noVideo = document.getElementById("noVideo"); // only if using <video>
 
 document.getElementById("noBtn").addEventListener("click", () => {
@@ -437,6 +452,7 @@ document.getElementById("noBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

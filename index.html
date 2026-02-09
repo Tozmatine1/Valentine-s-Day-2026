@@ -220,7 +220,7 @@ video:-webkit-full-screen {
 <!-- Intro overlay (shows on first load) -->
 <div class="overlay intro show" id="introOverlay">
   <div class="modal introModal">
-    <div class="final-question">
+    <div class="final-question" id="finalQuestionBox">
       <h3 style="margin:0 0 8px;">Let’s explore 💘</h3>
       <p style="margin:0;">
         let's explore some of the key places and moments from our relationship.
@@ -433,13 +433,13 @@ document.getElementById("yesBtn").addEventListener("click", () => {
 const noVideoWrap = document.getElementById("noVideoWrap");
 const noVideo = document.getElementById("noVideo");
 
-const finalQuestion = document.querySelector(".final-question");
+const finalQuestionBox = document.getElementById("finalQuestionBox");
 
 document.getElementById("noBtn").addEventListener("click", () => {
 
-  // Hide the question box
-  if (finalQuestion) {
-    finalQuestion.style.display = "none";
+  // Force-hide the Sophia box
+  if (finalQuestionBox) {
+    finalQuestionBox.style.display = "none";
   }
 
   // Show video
@@ -449,19 +449,15 @@ document.getElementById("noBtn").addEventListener("click", () => {
   document.getElementById("yesBtn").style.display = "none";
   document.getElementById("noBtn").style.display = "none";
 
-  // Restart video
+  // Restart + play video
   noVideo.currentTime = 0;
-
-  // Play video
   noVideo.play().catch(() => {});
 
-  // Force fullscreen (cross-browser)
+  // Force fullscreen
   if (noVideo.requestFullscreen) {
     noVideo.requestFullscreen();
   } else if (noVideo.webkitRequestFullscreen) {
-    noVideo.webkitRequestFullscreen(); // Safari
-  } else if (noVideo.msRequestFullscreen) {
-    noVideo.msRequestFullscreen(); // IE/Edge legacy
+    noVideo.webkitRequestFullscreen();
   }
 });
 
@@ -481,6 +477,7 @@ introOkBtn.addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

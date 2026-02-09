@@ -175,15 +175,6 @@
     .modal h3{margin:0 0 8px;font-size:28px;letter-spacing:-.2px}
     .modal p{margin:0 0 14px;color:rgba(0,0,0,.65)}
     .buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-
-<div id="noVideoWrap" style="display:none; margin-top:14px;">
-  <div class="videoBox">
-    <video id="noVideo" controls playsinline>
-      <source src="no.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-  </div>
-</div>
     
     @media (max-width:520px){
       .nav-controls{flex-direction:column;}
@@ -216,6 +207,14 @@
       <div class="buttons">
         <button class="primary" id="yesBtn">Yes 💖</button>
         <button class="ghost" id="noBtn">No</button>
+      <div id="noVideoWrap" style="display:none; margin-top:14px;">
+  <div class="videoBox">
+    <video id="noVideo" controls playsinline>
+      <source src="no.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -425,6 +424,7 @@ document.getElementById("noBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

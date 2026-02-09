@@ -75,6 +75,17 @@
   box-shadow:0 12px 30px rgba(0,0,0,.18);
 }
 
+/* Intro overlay variant */
+.overlay.intro{
+  z-index: 95000; /* above map/hearts */
+}
+
+/* Make sure Valentine overlay still wins if both are visible */
+#overlay{
+  z-index: 99999;
+}
+
+    
 .videoBox video{
   width:100%;
   height:auto;
@@ -206,6 +217,23 @@ video:-webkit-full-screen {
 
   <div class="hearts" id="hearts"></div>
 
+<!-- Intro overlay (shows on first load) -->
+<div class="overlay intro show" id="introOverlay">
+  <div class="modal introModal">
+    <div class="final-question">
+      <h3 style="margin:0 0 8px;">Let’s explore 💘</h3>
+      <p style="margin:0;">
+        let's explore some of the key places and moments from our relationship.
+      </p>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" id="introOkBtn">Okay</button>
+    </div>
+  </div>
+</div>
+
+  
   <div class="overlay" id="overlay">
     <div class="modal">
       <div class="final-question">
@@ -437,16 +465,23 @@ document.getElementById("noBtn").addEventListener("click", () => {
   }
 });
 
-
-
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) overlay.classList.remove("show");
     });
+
+const introOverlay = document.getElementById("introOverlay");
+const introOkBtn = document.getElementById("introOkBtn");
+
+introOkBtn.addEventListener("click", () => {
+  introOverlay.classList.remove("show");
+});
+
 
     init();
   </script>
 </body>
 </html>
+
 
 
 

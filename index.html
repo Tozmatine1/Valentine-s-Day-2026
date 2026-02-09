@@ -184,7 +184,6 @@
     </video>
   </div>
 </div>
-
     
     @media (max-width:520px){
       .nav-controls{flex-direction:column;}
@@ -394,7 +393,7 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   document.getElementById("yesBtn").style.display = "none";
   document.getElementById("noBtn").style.display = "none";
 });
-
+    
 const noVideoWrap = document.getElementById("noVideoWrap");
 const noVideo = document.getElementById("noVideo");
 
@@ -404,7 +403,6 @@ document.getElementById("noBtn").addEventListener("click", () => {
   noVideoWrap.style.display = "block";
 
   // Optional: update text
-  finalTitle.textContent = "Wrong answer 🙃";
   finalSubtitle.textContent = "";
 
   // Hide buttons
@@ -418,31 +416,6 @@ document.getElementById("noBtn").addEventListener("click", () => {
   });
 });
 
-    
-const noVideoWrap = document.getElementById("noVideoWrap");
-const noVideo = document.getElementById("noVideo"); // only if using <video>
-
-document.getElementById("noBtn").addEventListener("click", () => {
-  // Show the video area
-  noVideoWrap.style.display = "block";
-
-  // Optional: change the overlay text
-  finalTitle.textContent = "Wrong answer 🙃";
-  finalSubtitle.textContent = "";
-
-  // Optional: hide the buttons after clicking No
-  document.getElementById("yesBtn").style.display = "none";
-  document.getElementById("noBtn").style.display = "none";
-
-  // Start video (sometimes autoplay is blocked; this helps)
-  if (noVideo) {
-    noVideo.currentTime = 0;
-    noVideo.play().catch(() => {
-      // Autoplay blocked; user can press play
-    });
-  }
-});
-
 
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) overlay.classList.remove("show");
@@ -452,6 +425,7 @@ document.getElementById("noBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 

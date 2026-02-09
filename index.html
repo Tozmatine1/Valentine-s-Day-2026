@@ -61,6 +61,22 @@
   box-shadow: 0 8px 20px rgba(0,0,0,.15);
 }
 
+.videoBox{
+  width:100%;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+
+.videoBox video,
+.videoBox iframe{
+  width:100%;
+  height:auto;
+  display:block;
+  background:#000;
+}
+
+    
 .final-question h3{
   margin: 0 0 6px;
 }
@@ -155,6 +171,30 @@
     .modal p{margin:0 0 14px;color:rgba(0,0,0,.65)}
     .buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 
+<div id="noVideoWrap" style="display:none; margin-top:14px;">
+  <div class="videoBox">
+    <!-- Option A: Local MP4 file (recommended) -->
+    <video id="noVideo" controls autoplay playsinline>
+      <source src="no.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Option B: YouTube/Vimeo embed instead (comment Option A above and use this)
+    <iframe
+      id="noVideoFrame"
+      width="100%"
+      height="315"
+      src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1"
+      title="Video"
+      frameborder="0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+    -->
+  </div>
+</div>
+
+    
     @media (max-width:520px){
       .nav-controls{flex-direction:column;}
       .nav-controls button{width:100%;}
@@ -185,7 +225,7 @@
 
       <div class="buttons">
         <button class="primary" id="yesBtn">Yes 💖</button>
-        <button class="ghost" id="noBtn">No 🙃</button>
+        <button class="ghost" id="noBtn">No</button>
       </div>
     </div>
   </div>
@@ -364,12 +404,30 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   document.getElementById("noBtn").style.display = "none";
 });
 
-    document.getElementById("noBtn").addEventListener("mouseover", (e) => {
-      const btn = e.currentTarget;
-      const x = (Math.random() * 220) - 110;
-      const y = (Math.random() * 120) - 60;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
+    const noVideoWrap = document.getElementById("noVideoWrap");
+const noVideo = document.getElementById("noVideo"); // only if using <video>
+
+document.getElementById("noBtn").addEventListener("click", () => {
+  // Show the video area
+  noVideoWrap.style.display = "block";
+
+  // Optional: change the overlay text
+  finalTitle.textContent = "Wrong answer 🙃";
+  finalSubtitle.textContent = "";
+
+  // Optional: hide the buttons after clicking No
+  document.getElementById("yesBtn").style.display = "none";
+  document.getElementById("noBtn").style.display = "none";
+
+  // Start video (sometimes autoplay is blocked; this helps)
+  if (noVideo) {
+    noVideo.currentTime = 0;
+    noVideo.play().catch(() => {
+      // Autoplay blocked; user can press play
     });
+  }
+});
+
 
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) overlay.classList.remove("show");
@@ -379,6 +437,7 @@ document.getElementById("yesBtn").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 
